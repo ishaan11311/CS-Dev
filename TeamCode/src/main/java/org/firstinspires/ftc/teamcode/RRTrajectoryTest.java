@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+
 
 @Autonomous
 public class RRTrajectoryTest extends LinearOpMode {
@@ -28,13 +30,23 @@ public class RRTrajectoryTest extends LinearOpMode {
                 .build();
 
         Trajectory goBack = drive.trajectoryBuilder(startPose)
-                .back(50)
+                .back(10)
                 .build();
+
+        TrajectorySequence backwards = drive.trajectorySequenceBuilder(startPose)
+                .back(10)
+                .build();
+
+        boolean run = true;
 
         waitForStart();
 
         drive.setPoseEstimate(startPose);
 
-        drive.followTrajectory(goForward);
+        drive.followTrajectorySequence(backwards);
+
+//        if (run){
+//            drive.followTrajectory(goBack);
+//        }
     }
 }

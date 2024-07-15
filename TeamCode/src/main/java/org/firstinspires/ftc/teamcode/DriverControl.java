@@ -282,15 +282,22 @@ public class DriverControl extends OpMode {
         }
         //Code to set outtake arm to activated position
         if(gamepad2.dpad_up) {
-            if (outtakeArmUp == false){
-                elbowServo.setPosition(0.73);
-                mStateTime.reset();
-                outtakeArmUp = true;
-            }
-            if (outtakeArmUp == true && mStateTime.time() >= 0.1){
-                wristServo.setPosition(0.1);
-                outtakeArmUp = false;
-            }
+            elbowServo.setPosition(0.4);
+            wristServo.setPosition(0.4);
+
+//            elbowServo.setPosition(0.64);
+//            wristServo.setPosition(0.1);
+
+
+//            if (outtakeArmUp == false){
+//                elbowServo.setPosition(0.73);
+//                mStateTime.reset();
+//                outtakeArmUp = true;
+//            }
+//            if (outtakeArmUp == true && mStateTime.time() >= 0.1){
+//                wristServo.setPosition(0.1);
+//                outtakeArmUp = false;
+//            }
         }
 
         //Close outtake door

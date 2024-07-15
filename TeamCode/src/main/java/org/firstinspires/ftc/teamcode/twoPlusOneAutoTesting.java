@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -15,16 +13,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.OpenCV.TeamElementSubsystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 
 //@Disabled
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RRAutoRedFarVision")
-public class RRAutoRedFarVision extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="twoPlusOneAutoTesting")
+public class twoPlusOneAutoTesting extends LinearOpMode {
     IMU imu;
     /* Declare OpMode members. */
     Robot myRobot = new Robot();
@@ -234,11 +230,11 @@ public class RRAutoRedFarVision extends LinearOpMode {
         TrajectorySequence Zone1Short = drive.trajectorySequenceBuilder(startPose)
                 .back(1)
                 .strafeRight(12)
-                .back(23)
-                .forward(21)
+                .back(20)
+                .forward(18)
                 .turn(Math.toRadians(-90))
                 .back(78)
-                .lineToConstantHeading(new Vector2d(40, -30))
+                .lineToConstantHeading(new Vector2d(40, -29))
                 .build();
 
         TrajectorySequence Zone3Short = drive.trajectorySequenceBuilder(startPose)
@@ -249,37 +245,35 @@ public class RRAutoRedFarVision extends LinearOpMode {
                 .forward(8)
                 .strafeLeft(25)
                 .back(79)
-                .lineToConstantHeading(new Vector2d(40, -41))
+                .lineToConstantHeading(new Vector2d(40, -41.5))
                 .build();
 
-        TrajectorySequence Zone3Short_2plus1 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence Zone3Short_2plus2 = drive.trajectorySequenceBuilder(startPose)
                 .back(26)
                 .turn(Math.toRadians(-90))
-                .back(2)
+                .back(4)
                 .strafeRight(2)
                 .addDisplacementMarker(() -> {
                     intake.setPower(0.65);
                     outtakeWheel.setPower(-1);
                 })
-                .lineToConstantHeading(new Vector2d(-58, -35.5))
+                .lineToConstantHeading(new Vector2d(-59.5, -35.5))
                 .waitSeconds(0.2)
                 .back(3)
-                .lineToConstantHeading(new Vector2d(-58, -35.5))
+                .lineToConstantHeading(new Vector2d(-59.5, -35.5))
                 .waitSeconds(0.2)
-                .back(3.5)
-                .addTemporalMarker(() -> intake.setPower(1))
+                .back(3)
+                .addTemporalMarker(() -> intake.setPower(-1))
                 .addTemporalMarker(() -> outtakeWheel.setPower(0))
                 .waitSeconds(1)
                 .back(17)
 //              .splineToConstantHeading(new Vector2d(-37, -59), Math.toRadians(0))
-                .addTemporalMarker(() -> intake.setPower(-1))
-                .addTemporalMarker(() -> outtakeWheel.setPower(0))
                 .lineToConstantHeading(new Vector2d(-40, -58.5))
                 .addDisplacementMarker(() -> {
                     intake.setPower(0);
                 })
-                .back(50)
-                .splineToConstantHeading(new Vector2d(40, -41), Math.toRadians(0))
+                .back(80)
+                .lineToConstantHeading(new Vector2d(40, -41))
                 .build();
 
         TrajectorySequence Zone2Long = drive.trajectorySequenceBuilder(startPose)
@@ -369,7 +363,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
                 drive.followTrajectorySequence(Zone1Short);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist);
 
                 sleep(250);
 
@@ -384,7 +378,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
                 drive.followTrajectorySequence(Zone2Short);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist);
 
                 sleep(250);
 
@@ -397,10 +391,9 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
             } else if (element_zone == 3) {
 
-//                drive.followTrajectorySequence(Zone3Short);
-                drive.followTrajectorySequence(Zone3Short_2plus1);
+                drive.followTrajectorySequence(Zone3Short_2plus2);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist);
 
                 sleep(250);
 
@@ -432,7 +425,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
                 drive.followTrajectorySequence(Zone1Long);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist);
 
                 sleep(250);
 
@@ -446,7 +439,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
             } else if (element_zone == 2) {
                 drive.followTrajectorySequence(Zone2Long);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist);
 
                 sleep(250);
 
@@ -461,7 +454,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
                 drive.followTrajectorySequence(Zone3Long);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist);
 
                 sleep(250);
 
@@ -865,10 +858,9 @@ public class RRAutoRedFarVision extends LinearOpMode {
     }
 
     public void openOuttakeArm(double slidesPower, double slidesTimeMilliseconds, DcMotor slideMotor1, DcMotor slideMotor2,
-                               Servo elbow, Servo wrist, CRServo outtakeWheel){
+                               Servo elbow, Servo wrist){
         moveSlidesTime(slidesPower, slidesTimeMilliseconds, slideMotor1, slideMotor2);
         sleep((long) slidesTimeMilliseconds + 200);
-        outtakeWheel.setPower(-1);
         outtakeArmUpV2(elbow, wrist);
         sleep(600);
     }

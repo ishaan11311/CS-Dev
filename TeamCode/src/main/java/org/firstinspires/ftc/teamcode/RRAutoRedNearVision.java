@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 
 //@Disabled
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RRAutoRedFarVision")
-public class RRAutoRedFarVision extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RRAutoRedNearVision")
+public class RRAutoRedNearVision extends LinearOpMode {
     IMU imu;
     /* Declare OpMode members. */
     Robot myRobot = new Robot();
@@ -121,9 +121,9 @@ public class RRAutoRedFarVision extends LinearOpMode {
 //        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 //        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        intake = hardwareMap.get(DcMotor.class,"intake");
-        slideMotor1 = hardwareMap.get(DcMotor.class,"slide_motor1");
-        slideMotor2 = hardwareMap.get(DcMotor.class,"slide_motor2");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        slideMotor1 = hardwareMap.get(DcMotor.class, "slide_motor1");
+        slideMotor2 = hardwareMap.get(DcMotor.class, "slide_motor2");
         outtakeWheel = hardwareMap.get(CRServo.class, "outtakeWheel");
         wrist = hardwareMap.get(Servo.class, "outtakeWrist");
         elbow = hardwareMap.get(Servo.class, "outtakeElbow");
@@ -155,22 +155,19 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
         //element_zone = teamElementDetection.ElementDetection(telemetry);
 
-        while (!opModeIsActive() && !isStopRequested()){
+        while (!opModeIsActive() && !isStopRequested()) {
             element_zone = teamElementDetection.elementDetection(telemetry);
 
-            if (togglePreview && gamepad2.a){
+            if (togglePreview && gamepad2.a) {
                 togglePreview = false;
                 teamElementDetection.toggleAverageZone();
-            }else if (!gamepad2.a){
+            } else if (!gamepad2.a) {
                 togglePreview = true;
             }
 
-            if (gamepad1.y ){
+            if (gamepad1.y) {
                 initDelay = 5000;
-            }
-
-
-            else if(gamepad1.a){
+            } else if (gamepad1.a) {
                 initDelay = 0000;
             }
 
@@ -178,29 +175,27 @@ public class RRAutoRedFarVision extends LinearOpMode {
             telemetry.addData("Current initDelay:", initDelay);
 
 
-            if (gamepad1.x){
+            if (gamepad1.x) {
                 curAlliance = "blue";
-            }else if (gamepad1.b){
+            } else if (gamepad1.b) {
                 curAlliance = "red";
             }
             teamElementDetection.setAlliance(curAlliance);
             telemetry.addData("Select Alliance (Gamepad1 X = Blue, Gamepad1 B = Red)", "");
             telemetry.addData("Current Alliance Selected : ", curAlliance.toUpperCase());
 
-            if (gamepad1.dpad_down){
+            if (gamepad1.dpad_down) {
                 route = "short";
-            }
-            else if (gamepad1.dpad_up){
+            } else if (gamepad1.dpad_up) {
                 route = "long";
             }
 
             telemetry.addData("Select route (Gamepad1 down = short, Gamepad1 up = long", "");
             telemetry.addData("Current Route Selected:", route);
 
-            if (gamepad1.dpad_left){
+            if (gamepad1.dpad_left) {
                 parking = "center";
-            }
-            else if (gamepad1.dpad_right){
+            } else if (gamepad1.dpad_right) {
                 parking = "corner";
             }
 
@@ -221,100 +216,73 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-35, -61.5, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(12, -61.5, Math.toRadians(-90));
 
-        TrajectorySequence Zone2Short = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence Zone2_2plus2 = drive.trajectorySequenceBuilder(startPose)
                 .back(31)
-                .forward(27.4)
-                .turn(Math.toRadians(-90))
-                .back(75)
-                .lineToConstantHeading(new Vector2d(40, -35))
-                .build();
-
-        TrajectorySequence Zone1Short = drive.trajectorySequenceBuilder(startPose)
-                .back(1)
-                .strafeRight(12)
-                .back(23)
-                .forward(21)
-                .turn(Math.toRadians(-90))
-                .back(78)
-                .lineToConstantHeading(new Vector2d(40, -30))
-                .build();
-
-        TrajectorySequence Zone3Short = drive.trajectorySequenceBuilder(startPose)
-                .back(26)
-                .turn(Math.toRadians(-90))
-                .back(4)
-                .strafeRight(2)
-                .forward(8)
-                .strafeLeft(25)
-                .back(79)
-                .lineToConstantHeading(new Vector2d(40, -41))
-                .build();
-
-        TrajectorySequence Zone3Short_2plus1 = drive.trajectorySequenceBuilder(startPose)
-                .back(26)
-                .turn(Math.toRadians(-90))
-                .back(2)
-                .strafeRight(2)
+                .forward(7)
+                .addTemporalMarker(() -> openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel))
+                .splineToLinearHeading(new Pose2d(40, -35, Math.toRadians(180)), Math.toRadians(90))
+//                .waitSeconds(1.4)
+                .back(13)
+                .addTemporalMarker(() -> scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel))
+                .waitSeconds(1.2)
+                .forward(7)
+                .addTemporalMarker(() -> slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel))
+                .waitSeconds(1.8)
+                .splineToConstantHeading(new Vector2d(10, -58.5), Math.toRadians(200))
+                .forward(50)
                 .addDisplacementMarker(() -> {
                     intake.setPower(0.65);
                     outtakeWheel.setPower(-1);
                 })
-                .lineToConstantHeading(new Vector2d(-58, -35.5))
-                .waitSeconds(0.2)
+                .splineToConstantHeading(new Vector2d(-55, -11.5), Math.toRadians(130))
+                .lineToConstantHeading(new Vector2d(-59.5, -11.5))
                 .back(3)
-                .lineToConstantHeading(new Vector2d(-58, -35.5))
-                .waitSeconds(0.2)
+                .lineToConstantHeading(new Vector2d(-59.5, -11.5))
                 .back(3.5)
                 .addTemporalMarker(() -> intake.setPower(1))
-                .addTemporalMarker(() -> outtakeWheel.setPower(0))
+                .addTemporalMarker(() -> outtakeWheel.setPower(-1))
                 .waitSeconds(1)
-                .back(17)
-//              .splineToConstantHeading(new Vector2d(-37, -59), Math.toRadians(0))
                 .addTemporalMarker(() -> intake.setPower(-1))
-                .addTemporalMarker(() -> outtakeWheel.setPower(0))
-                .lineToConstantHeading(new Vector2d(-40, -58.5))
+                .back(70)
                 .addDisplacementMarker(() -> {
                     intake.setPower(0);
                 })
-                .back(50)
-                .splineToConstantHeading(new Vector2d(40, -41), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(44, -35), Math.toRadians(0))
+                .addTemporalMarker(() -> openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel))
+//                .waitSeconds(1.4)
+                .back(9)
+                .addTemporalMarker(() -> scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel))
+//                .waitSeconds(1.2)
+
+//                                .splineToConstantHeading(new Vector2d(60, -62), Math.toRadians(20))
+//                                .lineToConstantHeading(new Vector2d(40, -62))
+//                                .lineToConstantHeading(new Vector2d(60, -62))
                 .build();
 
-        TrajectorySequence Zone2Long = drive.trajectorySequenceBuilder(startPose)
-                .back(29.5)
+        TrajectorySequence Zone2Short = drive.trajectorySequenceBuilder(startPose)
+                .back(31)
                 .forward(7)
-                .strafeRight(19)
-                .back(27.5)
-                .turn(Math.toRadians(-90))
-                .back(94)
-                .lineToConstantHeading(new Vector2d(40, -35))
+                .splineToLinearHeading(new Pose2d(40, -35, Math.toRadians(180)), Math.toRadians(90))
                 .build();
 
-        TrajectorySequence Zone1Long = drive.trajectorySequenceBuilder(startPose)
-                .back(1)
-                .strafeRight(12)
-                .back(20)
-                .forward(10)
-                .strafeLeft(14)
-                .back(39)
-                .turn(Math.toRadians(-90))
-                .back(73)
-                .lineToConstantHeading(new Vector2d(40, -29))
-                .build();
-
-        TrajectorySequence Zone3Long = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence Zone1Short = drive.trajectorySequenceBuilder(startPose)
                 .back(26)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .back(4)
-                .strafeRight(2)
-                .forward(10)
-                .strafeRight(23)
-                .back(81)
-                .lineToConstantHeading(new Vector2d(40, -41.5))
+                .strafeLeft(2)
+                .forward(8)
+                .splineToLinearHeading(new Pose2d(40, -30, Math.toRadians(180)), Math.toRadians(90))
                 .build();
 
+        TrajectorySequence Zone3Short = drive.trajectorySequenceBuilder(startPose)
+                .back(1)
+                .strafeLeft(11.5)
+                .back(24)
+                .forward(10)
+                .splineToLinearHeading(new Pose2d(40, -41, Math.toRadians(180)), Math.toRadians(90))
+                .build();
 
         TrajectorySequence ParkCenter = drive.trajectorySequenceBuilder(new Pose2d(40, -35, Math.toRadians(180)))
                 .lineToConstantHeading(new Vector2d(40, -14))
@@ -360,154 +328,90 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
         //drive.followTrajectorySequence(Zone2Short);
 
-        if (route == "short") {
+        if (element_zone == 1) {
 
-            telemetry.addData("started short route", "");
-            telemetry.update();
+            drive.followTrajectorySequence(Zone1Short);
 
-            if (element_zone == 1) {
+            openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
 
-                drive.followTrajectorySequence(Zone1Short);
+            sleep(250);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+            drive.followTrajectory(back13Zone1);
 
-                sleep(250);
-
-                drive.followTrajectory(back13Zone1);
-
-                scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
-                drive.followTrajectory(forward13inZone1);
-                slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
+            scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
+            drive.followTrajectory(forward13inZone1);
+            slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
 
 
-            } else if (element_zone == 2) {
+        } else if (element_zone == 2) {
 
-                drive.followTrajectorySequence(Zone2Short);
+            drive.followTrajectorySequence(Zone2Short);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+            openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
 
-                sleep(250);
+            sleep(250);
 
-                drive.followTrajectory(back13inZone2);
+            drive.followTrajectory(back13inZone2);
 
-                scorePix(SPEED_FAST,  slideMotor1, slideMotor2, outtakeWheel);
-                drive.followTrajectory(forward13inZone2);
-                slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
+            scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
+            drive.followTrajectory(forward13inZone2);
+            slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
 
 
-            } else if (element_zone == 3) {
+        } else if (element_zone == 3) {
 
 //                drive.followTrajectorySequence(Zone3Short);
-                drive.followTrajectorySequence(Zone3Short_2plus1);
+            drive.followTrajectorySequence(Zone3Short);
 
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
+            openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
 
-                sleep(250);
+            sleep(250);
 
-                drive.followTrajectory(back13inZone3);
+            drive.followTrajectory(back13inZone3);
 
-                scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
-                drive.followTrajectory(forward13inZone3);
-                slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
+            scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
+            drive.followTrajectory(forward13inZone3);
+            slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
 
 
-            }
-
-            sleep(1000);
-
-            if (parking == "corner") {
-                drive.followTrajectorySequence(ParkCorner);
-            }
-
-            else if (parking == "center") {
-                drive.followTrajectorySequence(ParkCenter);
-            }
         }
 
-        else if (route == "long"){
-            telemetry.addData("started long route", "");
-            telemetry.update();
+        sleep(1000);
 
-            if (element_zone == 1) {
-
-                drive.followTrajectorySequence(Zone1Long);
-
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
-
-                sleep(250);
-
-                drive.followTrajectory(back13Zone1);
-
-                scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
-                drive.followTrajectory(forward13inZone1);
-                slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
-
-
-            } else if (element_zone == 2) {
-                drive.followTrajectorySequence(Zone2Long);
-
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
-
-                sleep(250);
-
-                drive.followTrajectory(back13inZone2);
-
-                scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
-                drive.followTrajectory(forward13inZone2);
-                slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
-
-
-            } else if (element_zone == 3) {
-
-                drive.followTrajectorySequence(Zone3Long);
-
-                openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
-
-                sleep(250);
-
-                drive.followTrajectory(back13inZone3);
-
-                scorePix(SPEED_FAST, slideMotor1, slideMotor2, outtakeWheel);
-                drive.followTrajectory(forward13inZone3);
-                slidesDown(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeDoor, outtakeWheel);
-
-            }
-
-            sleep(1000);
-
-            if (parking == "corner") {
-                drive.followTrajectorySequence(ParkCorner);
-            }
-
-            else if (parking == "center") {
-                drive.followTrajectorySequence(ParkCenter);
-            }
-        }
-
-        /**
-         * This is a test
-         * customEncoderDrive(DRIVE_SPEED, leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor,100, 100, 100, 100);
-         telemetry.addData("LF encoder after move",leftFrontMotor.getCurrentPosition());
-         telemetry.addData("RF encoder after move",rightFrontMotor.getCurrentPosition());
-         telemetry.addData("LB encoder after move",leftBackMotor.getCurrentPosition());++
-         telemetry.addData("RB encoder after move",rightBackMotor.getCurrentPosition());
-         telemetry.update();
-         //sleep(5000);
-
-
-         //not working//turnLeft(orientation, leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor, 90, 0.2);
-         turnLeft( leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor, 90, 0.2);
-         telemetry.addData("Yaw after left turn", orientation.getYaw(AngleUnit.DEGREES));
-         telemetry.update();
-         //sleep(5000);
-
-         turnRight( leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor, 90, 0.2);
-         telemetry.addData("Yaw after right turn", orientation.getYaw(AngleUnit.DEGREES));
-         telemetry.update();
-         //sleep(5000);
-         */
+//        if (parking == "corner") {
+//            drive.followTrajectorySequence(ParkCorner);
+//        } else if (parking == "center") {
+//            drive.followTrajectorySequence(ParkCenter);
+//        }
 
     }
+
+
+
+    /**
+     * This is a test
+     * customEncoderDrive(DRIVE_SPEED, leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor,100, 100, 100, 100);
+     telemetry.addData("LF encoder after move",leftFrontMotor.getCurrentPosition());
+     telemetry.addData("RF encoder after move",rightFrontMotor.getCurrentPosition());
+     telemetry.addData("LB encoder after move",leftBackMotor.getCurrentPosition());++
+     telemetry.addData("RB encoder after move",rightBackMotor.getCurrentPosition());
+     telemetry.update();
+     //sleep(5000);
+
+
+     //not working//turnLeft(orientation, leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor, 90, 0.2);
+     turnLeft( leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor, 90, 0.2);
+     telemetry.addData("Yaw after left turn", orientation.getYaw(AngleUnit.DEGREES));
+     telemetry.update();
+     //sleep(5000);
+
+     turnRight( leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor, 90, 0.2);
+     telemetry.addData("Yaw after right turn", orientation.getYaw(AngleUnit.DEGREES));
+     telemetry.update();
+     //sleep(5000);
+     */
+
+
 
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
@@ -867,10 +771,10 @@ public class RRAutoRedFarVision extends LinearOpMode {
     public void openOuttakeArm(double slidesPower, double slidesTimeMilliseconds, DcMotor slideMotor1, DcMotor slideMotor2,
                                Servo elbow, Servo wrist, CRServo outtakeWheel){
         moveSlidesTime(slidesPower, slidesTimeMilliseconds, slideMotor1, slideMotor2);
-        sleep((long) slidesTimeMilliseconds + 200);
+//        sleep((long) slidesTimeMilliseconds + 200);
         outtakeWheel.setPower(-1);
         outtakeArmUpV2(elbow, wrist);
-        sleep(600);
+//        sleep(600);
     }
 
     public void scorePix(double slidesPower, DcMotor slideMotor1, DcMotor slideMotor2, CRServo outtakeWheel){
@@ -972,7 +876,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
         elbow.setPosition(0.73);
         mStateTime.reset();
 
-        while (mStateTime.time() <= 0.3){
+        while (mStateTime.time() <= 0.7){
 
         }
 

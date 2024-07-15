@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 
 //@Disabled
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RRAutoRedFarVision")
-public class RRAutoRedFarVision extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RRAutoBlueFarVision")
+public class RRAutoBlueFarVision extends LinearOpMode {
     IMU imu;
     /* Declare OpMode members. */
     Robot myRobot = new Robot();
@@ -56,7 +56,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
     static final double SPEED_FULLSPEED = 1.0;
 
     YawPitchRollAngles orientation;
-    String curAlliance = "red";
+    String curAlliance = "blue";
     public int element_zone = 2;
 
     private TeamElementSubsystem teamElementDetection=null;
@@ -221,138 +221,110 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-35, -61.5, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(-35, 61.5, Math.toRadians(90));
 
         TrajectorySequence Zone2Short = drive.trajectorySequenceBuilder(startPose)
                 .back(31)
                 .forward(27.4)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .back(75)
-                .lineToConstantHeading(new Vector2d(40, -35))
-                .build();
-
-        TrajectorySequence Zone1Short = drive.trajectorySequenceBuilder(startPose)
-                .back(1)
-                .strafeRight(12)
-                .back(23)
-                .forward(21)
-                .turn(Math.toRadians(-90))
-                .back(78)
-                .lineToConstantHeading(new Vector2d(40, -30))
+                .lineToConstantHeading(new Vector2d(40, 32.3))
                 .build();
 
         TrajectorySequence Zone3Short = drive.trajectorySequenceBuilder(startPose)
-                .back(26)
-                .turn(Math.toRadians(-90))
-                .back(4)
-                .strafeRight(2)
-                .forward(8)
-                .strafeLeft(25)
-                .back(79)
-                .lineToConstantHeading(new Vector2d(40, -41))
+                .back(1)
+                .strafeLeft(11.5)
+                .back(24)
+                .forward(22)
+                .turn(Math.toRadians(90))
+                .back(87)
+                .lineToConstantHeading(new Vector2d(40, 28))
                 .build();
 
-        TrajectorySequence Zone3Short_2plus1 = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence Zone1Short = drive.trajectorySequenceBuilder(startPose)
                 .back(26)
-                .turn(Math.toRadians(-90))
-                .back(2)
-                .strafeRight(2)
-                .addDisplacementMarker(() -> {
-                    intake.setPower(0.65);
-                    outtakeWheel.setPower(-1);
-                })
-                .lineToConstantHeading(new Vector2d(-58, -35.5))
-                .waitSeconds(0.2)
-                .back(3)
-                .lineToConstantHeading(new Vector2d(-58, -35.5))
-                .waitSeconds(0.2)
-                .back(3.5)
-                .addTemporalMarker(() -> intake.setPower(1))
-                .addTemporalMarker(() -> outtakeWheel.setPower(0))
-                .waitSeconds(1)
-                .back(17)
-//              .splineToConstantHeading(new Vector2d(-37, -59), Math.toRadians(0))
-                .addTemporalMarker(() -> intake.setPower(-1))
-                .addTemporalMarker(() -> outtakeWheel.setPower(0))
-                .lineToConstantHeading(new Vector2d(-40, -58.5))
-                .addDisplacementMarker(() -> {
-                    intake.setPower(0);
-                })
-                .back(50)
-                .splineToConstantHeading(new Vector2d(40, -41), Math.toRadians(0))
+                .turn(Math.toRadians(90))
+                .back(4)
+                .strafeLeft(2)
+                .forward(8)
+                .strafeRight(23.5)
+                .back(79)
+                .lineToConstantHeading(new Vector2d(40, 40))
                 .build();
 
         TrajectorySequence Zone2Long = drive.trajectorySequenceBuilder(startPose)
-                .back(29.5)
+                .back(31)
                 .forward(7)
-                .strafeRight(19)
+                .strafeLeft(19)
                 .back(27.5)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .back(94)
-                .lineToConstantHeading(new Vector2d(40, -35))
-                .build();
-
-        TrajectorySequence Zone1Long = drive.trajectorySequenceBuilder(startPose)
-                .back(1)
-                .strafeRight(12)
-                .back(20)
-                .forward(10)
-                .strafeLeft(14)
-                .back(39)
-                .turn(Math.toRadians(-90))
-                .back(73)
-                .lineToConstantHeading(new Vector2d(40, -29))
+                .lineToConstantHeading(new Vector2d(40, 35))
                 .build();
 
         TrajectorySequence Zone3Long = drive.trajectorySequenceBuilder(startPose)
+                .back(1)
+                .strafeLeft(11.5)
+                .back(24)
+                .forward(14)
+                .strafeRight(11)
+                .back(39)
+                .turn(Math.toRadians(87))
+                .back(75)
+                .lineToConstantHeading(new Vector2d(40, 29))
+                .build();
+
+        TrajectorySequence Zone1Long = drive.trajectorySequenceBuilder(startPose)
                 .back(26)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .back(4)
-                .strafeRight(2)
+                .strafeLeft(2)
                 .forward(10)
-                .strafeRight(23)
+                .strafeLeft(23)
                 .back(81)
-                .lineToConstantHeading(new Vector2d(40, -41.5))
+                .lineToConstantHeading(new Vector2d(40, 41.5))
                 .build();
 
 
-        TrajectorySequence ParkCenter = drive.trajectorySequenceBuilder(new Pose2d(40, -35, Math.toRadians(180)))
-                .lineToConstantHeading(new Vector2d(40, -14))
-                .lineToConstantHeading(new Vector2d(60, -14))
+        TrajectorySequence ParkCenter = drive.trajectorySequenceBuilder(new Pose2d(40, 35, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(40, 9))
+                .lineToConstantHeading(new Vector2d(60, 9))
                 .build();
 
-        TrajectorySequence ParkCorner = drive.trajectorySequenceBuilder(new Pose2d(40, -35, Math.toRadians(180)))
-                .lineToConstantHeading(new Vector2d(40, -62))
-                .lineToConstantHeading(new Vector2d(60, -62))
+        TrajectorySequence ParkCorner = drive.trajectorySequenceBuilder(new Pose2d(40, 35, Math.toRadians(180)))
+                .lineToConstantHeading(new Vector2d(40, 58.5))
+                .lineToConstantHeading(new Vector2d(60, 58.5))
                 .build();
 
         Trajectory back13Zone1 = drive.trajectoryBuilder(Zone1Short.end())
-                .back(13)
+                .back(12.5)
                 .build();
 
         Trajectory forward13inZone1 = drive.trajectoryBuilder(back13Zone1.end())
-                .forward(13)
+                .forward(12.5)
                 .build();
 
         Trajectory back13inZone2 = drive.trajectoryBuilder(Zone2Short.end())
-                .back(13)
+                .back(12.5)
                 .build();
 
         Trajectory forward13inZone2 = drive.trajectoryBuilder(back13inZone2.end())
-                .forward(13)
+                .forward(12.5)
                 .build();
 
         Trajectory back13inZone3 = drive.trajectoryBuilder(Zone3Short.end())
-                .back(13)
+                .back(12.5)
                 .build();
 
         Trajectory forward13inZone3 = drive.trajectoryBuilder(back13inZone3.end())
-                .forward(13)
+                .forward(12.5)
                 .build();
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+        sleep(4);
 
         //sleep(initDelay);
 
@@ -397,8 +369,7 @@ public class RRAutoRedFarVision extends LinearOpMode {
 
             } else if (element_zone == 3) {
 
-//                drive.followTrajectorySequence(Zone3Short);
-                drive.followTrajectorySequence(Zone3Short_2plus1);
+                drive.followTrajectorySequence(Zone3Short);
 
                 openOuttakeArm(SPEED_FAST, 600, slideMotor1, slideMotor2, elbow, wrist, outtakeWheel);
 
@@ -959,6 +930,9 @@ public class RRAutoRedFarVision extends LinearOpMode {
     }
 
     public void outtakeArmUpV2 (Servo elbow, Servo wrist){
+        elbow.setPosition(0.7);
+        wrist.setPosition(0.1);
+
 //        if (outtakeArmUp == false){
 //            elbow.setPosition(0.73);
 //            mStateTime.reset();
@@ -969,13 +943,16 @@ public class RRAutoRedFarVision extends LinearOpMode {
 //            outtakeArmUp = false;
 //        }
 
-        elbow.setPosition(0.73);
-        mStateTime.reset();
 
-        while (mStateTime.time() <= 0.3){
 
-        }
 
-        wrist.setPosition(0.1);
+//        elbow.setPosition(0.73);
+//        mStateTime.reset();
+//
+//        while (mStateTime.time() <= 0.3){
+//
+//        }
+//
+//        wrist.setPosition(0.1);
     }
 }
